@@ -56,7 +56,7 @@ model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categ
 model.fit(X_train, Y_train, epochs=100)
 
 # Save the trained model
-model.save('my_model')
+model.save('my_model.h5')
 
 # Make predictions on the test set
 predictions = np.argmax(model.predict(X_test), axis=1)
