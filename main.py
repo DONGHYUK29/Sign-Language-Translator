@@ -12,7 +12,7 @@ from tensorflow.keras.models import load_model
 import language_tool_python
 
 # Set the path to the data directory
-PATH = 'C:/Users/brant/PycharmProjects/Sign-Language-Translator/data'
+PATH = 'C:\Users\brant\Desktop\3-2\creative1\Sign-Language-Translator\data'
 #PATH = os.path.join('data')
 
 # Create an array of action labels by listing the contents of the data directory
