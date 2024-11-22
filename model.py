@@ -18,11 +18,11 @@ PATH = 'C:\\Users\\brant\\Desktop\\3-2\\creative1\\Sign-Language-Translator\\dat
 actions = np.array(os.listdir(PATH))
 # 시퀸스 개수와 목표 프레임 수 설정
 sequences = 10
-TARGET_FRAMES = 50  # 목표 프레임 수
+TARGET_FRAMES = 30  # 목표 프레임 수
 
 
 def interpolate_frames(frames, target_length):
-    """시퀀스의 프레임 수를 목표 길이로 보간"""
+    #시퀀스의 프레임 수를 목표 길이로 보간
     if len(frames) == 0:
         return np.array([])
 
@@ -94,9 +94,9 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1, random_
 
 # 모델 아키텍처 정의
 model = Sequential()
-model.add(LSTM(64, return_sequences=True, input_shape=(TARGET_FRAMES, X.shape[2])))
-model.add(LSTM(128, return_sequences=True))
-model.add(LSTM(32))
+model.add(LSTM(64, return_sequences=True, activation='relu', input_shape=(TARGET_FRAMES, X.shape[2])))
+model.add(LSTM(128, return_sequences=True, activation='relu'))
+model.add(LSTM(64, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(actions.shape[0], activation='softmax'))
 
@@ -105,7 +105,7 @@ optimizer = Adam(learning_rate=0.0001)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
 # 모델 훈련
-model.fit(X_train, Y_train, epochs=200, batch_size=25)
+model.fit(X_train, Y_train, epochs=80)
 
 # 모델 저장
 model.save('my_model.h5')

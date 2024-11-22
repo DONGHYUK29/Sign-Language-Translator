@@ -43,11 +43,11 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
         draw_landmarks(image, results)
         keypoints.append(keypoint_extraction(results))
 
-        if len(keypoints) == 50:
+        if len(keypoints) == 30:
             keypoints = np.array(keypoints)
             prediction = model.predict(keypoints[np.newaxis, :, :])
             keypoints = []
-            if np.amax(prediction) > 0.7: #and last_prediction != actions[np.argmax(prediction)]:
+            if np.amax(prediction) > 0.5 and last_prediction != actions[np.argmax(prediction)]: #and last_prediction != actions[np.argmax(prediction)]:
                 sentence.append(actions[np.argmax(prediction)])
                 last_prediction = actions[np.argmax(prediction)]
                 print(sentence)
@@ -62,15 +62,14 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
             sentence[0] = sentence[0].capitalize()
 
         if len(sentence) >= 2:
-            if sentence[-1] in string.ascii_lowercase or sentence[-1] in string.ascii_uppercase:
-                if sentence[-2] in string.ascii_lowercase or sentence[-2] in string.ascii_uppercase or (sentence[-2] not in actions and sentence[-2] not in list(x.capitalize() for x in actions)):
-                    sentence[-1] = sentence[-2] + sentence[-1]
-                    sentence.pop(len(sentence) - 2)
-                    sentence[-1] = sentence[-1].capitalize()
+            if sentence[-1] in string.ascii_letters and sentence[-2] in string.ascii_letters:
+                sentence[-1] = sentence[-2] + sentence[-1]
+                sentence.pop(len(sentence) - 2)
+                sentence[-1] = sentence[-1].capitalize()
 
-        if keyboard.is_pressed('enter'):
-            text = ' '.join(sentence)
-            grammar_result = tool.correct(text)
+        # if keyboard.is_pressed('enter'):
+        #     text = ' '.join(sentence)
+        #     grammar_result = tool.correct(text)
 
         # 텍스트를 표시할 Y 좌표를 조정
         text_Y_coord = 430  # Y 좌표 조정 값 (기존 470에서 더 위로 올려 설정)
