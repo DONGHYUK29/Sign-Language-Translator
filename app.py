@@ -11,6 +11,10 @@ import string
 from my_functions import *
 
 from PIL import ImageFont, ImageDraw, Image
+import openai
+
+# GPT API 키 설정
+openai.api_key = "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"
 
 # 폰트 경로 설정
 fontpath = "C:\\Users\\brant\\Desktop\\3-2\\creative1\\Sign-Language-Translator\\gulim.ttc"  # 시스템에 설치된 한글 폰트 경로
@@ -118,12 +122,30 @@ def reset():
     grammar_result = ""
     return "Reset successful"
 
+
 @app.route('/grammar_check')
 def check_grammar():
     global sentence, grammar_result
     text = ' '.join(sentence)
-    grammar_result = tool.correct(text)
-    return grammar_result
+
+    if not text.strip():
+        return "검사할 텍스트가 없습니다."
+
+    try:
+        # OpenAI API 요청
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a grammar correction assistant."},
+                {"role": "user", "content": f"Please correct the grammar of the following text: {text}"}
+            ]
+        )
+        # GPT 응답 가져오기
+        grammar_result = response['choices'][0]['message']['content']
+        return grammar_result.strip()
+    except Exception as e:
+        print(f"Error with GPT API: {e}")
+        return "문법 검사 중 오류가 발생했습니다."
 
 
 if __name__ == '__main__':

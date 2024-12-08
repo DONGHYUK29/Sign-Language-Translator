@@ -47,7 +47,7 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
             keypoints = np.array(keypoints)
             prediction = model.predict(keypoints[np.newaxis, :, :])
             keypoints = []
-            if np.amax(prediction) > 0.5 and last_prediction != actions[np.argmax(prediction)]: #and last_prediction != actions[np.argmax(prediction)]:
+            if np.amax(prediction) > 0.85 and last_prediction != actions[np.argmax(prediction)]: #and last_prediction != actions[np.argmax(prediction)]:
                 sentence.append(actions[np.argmax(prediction)])
                 last_prediction = actions[np.argmax(prediction)]
                 print(sentence)

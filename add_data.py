@@ -5,9 +5,21 @@ import mediapipe as mp
 from itertools import product
 from my_functions import *
 import keyboard
+from PIL import ImageFont, ImageDraw, Image
+
+# 폰트 경로 설정
+fontpath = "C:\\Users\\brant\\Desktop\\3-2\\creative1\\Sign-Language-Translator\\gulim.ttc"  # 시스템에 설치된 한글 폰트 경로
+font = ImageFont.truetype(fontpath, 24)  # 폰트 크기 설정
+
+# 한글 텍스트 추가 함수
+def draw_text_korean(img, text, pos):
+    img_pil = Image.fromarray(img)
+    draw = ImageDraw.Draw(img_pil)
+    draw.text(pos, text, font=font, fill=(255, 255, 255))
+    return np.array(img_pil)
 
 # Define the actions (signs) that will be recorded and stored in the dataset
-actions = np.array([])
+actions = np.array(['잘가'])
 
 # Define the number of sequences and frames to be recorded for each action
 sequences = 30
@@ -43,11 +55,9 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
                 results = image_process(image, holistic)
                 draw_landmarks(image, results)
 
-                cv2.putText(image, 'Recroding data for the "{}". Sequence number {}.'.format(action, sequence),
-                            (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Pause.', (20, 400), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-                cv2.putText(image, 'Press "Space" when you are ready.', (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                            (0, 0, 255), 2, cv2.LINE_AA)
+                image = draw_text_korean(image, f'"{action}" 데이터를 녹화 중입니다. 시퀀스 번호: {sequence}', (20, 20))
+                image = draw_text_korean(image, '대기 중.', (20, 400))
+                image = draw_text_korean(image, '"Space"를 눌러 시작하세요.', (20, 450))
                 cv2.imshow('Camera', image)
                 cv2.waitKey(1)
 
@@ -63,8 +73,7 @@ with mp.solutions.holistic.Holistic(min_detection_confidence=0.75, min_tracking_
             draw_landmarks(image, results)
 
             # Display text on the image indicating the action and sequence number being recorded
-            cv2.putText(image, 'Recroding data for the "{}". Sequence number {}.'.format(action, sequence),
-                        (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+            image = draw_text_korean(image, f'"{action}" 데이터를 녹화 중입니다. 시퀀스 번호: {sequence}', (20, 20))
             cv2.imshow('Camera', image)
             cv2.waitKey(1)
 

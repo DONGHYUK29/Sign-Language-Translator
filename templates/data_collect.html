@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Language Data Collection</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .video-container {
+            width: 640px;
+            margin: 20px auto;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sign Language Data Collection</h1>
+
+    <div class="controls">
+        <input type="text" id="actionInput" placeholder="Enter action name">
+        <button id="startBtn">Start Collection</button>
+        <button id="stopBtn" disabled>Stop Collection</button>
+    </div>
+
+    <div class="video-container">
+        <img id="videoFeed" src="{{ url_for('video_feed') }}" width="640" height="480">
+    </div>
+
+    <div id="status"></div>
+
+    <script>
+    $(document).ready(function() {
+        $('#startBtn').click(function() {
+            var action = $('#actionInput').val().trim();
+            if (action !== '') {
+                $.ajax({
+                    url: '/start_collection',
+                    type: 'POST',
+                    data: {action: action},
+                    success: function(response) {
+                        $('#status').text(response.message);
+                        $('#startBtn').prop('disabled', true);
+                        $('#stopBtn').prop('disabled', false);
+                    },
+                    error: function() {
+                        $('#status').text('Collection start failed');
+                    }
+                });
+            } else {
+                $('#status').text('Please enter an action name');
+            }
+        });
+
+        $('#stopBtn').click(function() {
+            $.ajax({
+                url: '/stop_collection',
+                type: 'POST',
+                success: function(response) {
+                    $('#status').text(response.message);
+                    $('#startBtn').prop('disabled', false);
+                    $('#stopBtn').prop('disabled', true);
+                },
+                error: function() {
+                    $('#status').text('Collection stop failed');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
